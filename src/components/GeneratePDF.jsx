@@ -29,6 +29,7 @@ const GeneratePDF = ({ dom, klient }) => {
       await addImagePage(`/pdfpages/${dom.id}/info.png`);
       doc.addPage();
       await addImagePage(`/pdfpages/${dom.id}/info2.png`);
+      doc.addPage(); // <— ważne: nowa strona dla pierwszego wariantu
 
       // Strony 4-6: warianty
       const warianty = [
@@ -37,9 +38,7 @@ const GeneratePDF = ({ dom, klient }) => {
         { name: "Premium", cena: dom.ceny.premium, cenaM2: dom.cenaZaM2.premium }
       ];
 
-      for (const wariant of warianty) {
-        doc.addPage();
-
+      warianty.forEach((wariant) => {
         doc.setFillColor(4, 178, 0);
         doc.rect(0, 0, 210, 30, "F");
         doc.setTextColor(255, 255, 255);
@@ -89,9 +88,11 @@ const GeneratePDF = ({ dom, klient }) => {
           },
           body: ZAKRES_DOMU[wariant.name.toLowerCase()].map((item) => [item])
         });
-      }
 
-      // Strony 7-8: rzuty + kontakt
+        doc.addPage(); // <— przygotuj kolejną stronę (lub grafikę) po wariancie
+      });
+
+      // Strony 7-9: rzuty + kontakt
       await addImagePage(`/pdfpages/${dom.id}/rzut1.png`);
       doc.addPage();
       await addImagePage(`/pdfpages/${dom.id}/rzut2.png`);
